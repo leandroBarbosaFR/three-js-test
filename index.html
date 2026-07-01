@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js — Glass Ripple</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        overflow: hidden;
+        background: #0f1020;
+        font-family: system-ui, sans-serif;
+      }
+      #app {
+        width: 100vw;
+        height: 100vh;
+        display: block;
+      }
+      .hud {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        color: #cdd2ff;
+        font-size: 13px;
+        line-height: 1.6;
+        background: rgba(20, 22, 48, 0.6);
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: 1px solid rgba(120, 130, 255, 0.25);
+        backdrop-filter: blur(6px);
+        pointer-events: none;
+        user-select: none;
+        z-index: 2;
+      }
+      .hud b {
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+
+    <!-- Import map lets us use bare "three" imports straight from a CDN, no build step -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
