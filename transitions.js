@@ -29,8 +29,24 @@ barba.init({
   ],
 });
 
-// Keep the document title in sync with the page we land on.
-barba.hooks.afterEnter(({ next }) => {
-  const ns = next.namespace;
-  document.title = ns === "about" ? "Glass Ripple — About" : "Glass Ripple — Home";
+// Apply per-page "chrome": the WebGL canvas only belongs to the home
+// experience, so hide it on real content pages like About. Also keep the
+// document title in sync.
+const canvas = document.getElementById("app");
+function applyNamespace(ns) {
+  const isHome = ns !== "about";
+  if (canvas) canvas.style.display = isHome ? "block" : "none";
+  document.title = isHome ? "Glass Ripple — Home" : "Glass Ripple — About";
+}
+
+// Set the correct state for the page we first loaded on...
+applyNamespace(
+  document.querySelector('[data-barba="container"]')?.dataset.barbaNamespace
+);
+// While a transition runs, keep the canvas visible so there's no dark
+// flash — the opaque About page covers it when heading there.
+barba.hooks.beforeLeave(() => {
+  if (canvas) canvas.style.display = "block";
 });
+// ...then settle the final state once the new page has entered.
+barba.hooks.afterEnter(({ next }) => applyNamespace(next.namespace));
