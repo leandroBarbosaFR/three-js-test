@@ -3,59 +3,39 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Three.js — Glass Ripple</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-        overflow: hidden;
-        background: #0f1020;
-        font-family: system-ui, sans-serif;
-      }
-      #app {
-        width: 100vw;
-        height: 100vh;
-        display: block;
-      }
-      .hud {
-        position: fixed;
-        top: 16px;
-        left: 16px;
-        color: #cdd2ff;
-        font-size: 13px;
-        line-height: 1.6;
-        background: rgba(20, 22, 48, 0.6);
-        padding: 10px 14px;
-        border-radius: 10px;
-        border: 1px solid rgba(120, 130, 255, 0.25);
-        backdrop-filter: blur(6px);
-        pointer-events: none;
-        user-select: none;
-        z-index: 2;
-      }
-      .hud b {
-        color: #fff;
-      }
-    </style>
-  </head>
-  <body>
-    <canvas id="app"></canvas>
+    <title>Glass Ripple — Home</title>
+    <link rel="stylesheet" href="/styles.css" />
 
-    <!-- Import map lets us use bare "three" imports straight from a CDN, no build step -->
+    <!-- Import map lets us use bare imports straight from a CDN, no build step -->
     <script type="importmap">
       {
         "imports": {
           "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
-          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
+          "@barba/core": "https://esm.sh/@barba/core@2.10.3"
         }
       }
     </script>
+  </head>
+  <body>
+    <!-- Persistent: canvas + nav live OUTSIDE the Barba container so they
+         survive page transitions and never reload. -->
+    <canvas id="app"></canvas>
+    <nav class="nav">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+    </nav>
 
-    <script type="module" src="./main.js"></script>
+    <div data-barba="wrapper">
+      <main data-barba="container" data-barba-namespace="home">
+        <div class="hud">
+          <b>Glass Ripple 💧</b><br />
+          Scroll to scrub the video &middot; Move the mouse for waves
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+    <script type="module" src="/transitions.js"></script>
   </body>
 </html>

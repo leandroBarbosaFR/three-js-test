@@ -16,7 +16,7 @@
 import * as THREE from "three";
 
 // The background video, seen through the glass.
-const VIDEO_URL = "./public/cinematic-reflection.mp4";
+const VIDEO_URL = "/public/cinematic-reflection.mp4";
 
 // How many simultaneous ripples we can have on screen at once.
 const MAX_RIPPLES = 12;

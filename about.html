@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Glass Ripple — About</title>
+    <link rel="stylesheet" href="/styles.css" />
+
+    <!-- Same shell as index.html so a direct visit to /about.html also works. -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/",
+          "@barba/core": "https://esm.sh/@barba/core@2.10.3"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="app"></canvas>
+    <nav class="nav">
+      <a href="/index.html">Home</a>
+      <a href="/about.html">About</a>
+    </nav>
+
+    <div data-barba="wrapper">
+      <main data-barba="container" data-barba-namespace="about">
+        <section class="about">
+          <h1>About Us</h1>
+          <p>
+            We build tactile, motion-first web experiences — where the
+            interface reacts to you. This page is layered over a live WebGL
+            scene: a video seen through textured glass that ripples under the
+            cursor and scrubs as you scroll.
+          </p>
+          <p>
+            The background you see behind this panel never reloaded when you
+            navigated here. A single persistent canvas keeps rendering while
+            Barba.js swaps only the content on top — so transitions stay
+            seamless and the effect never skips a frame.
+          </p>
+          <p>
+            Replace this placeholder copy with your real story: who you are,
+            what you make, and how to reach you.
+          </p>
+          <a class="back" href="/index.html">← Back home</a>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+    <script type="module" src="/transitions.js"></script>
+  </body>
+</html>
