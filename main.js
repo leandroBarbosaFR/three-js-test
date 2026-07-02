@@ -259,32 +259,20 @@ window.addEventListener(
 );
 
 // 7. SCROLL → VIDEO FRAME ------------------------------------
-// The canvas is fixed & fullscreen, so native page scrolling is
-// unreliable here. Instead we track a virtual scroll progress (0..1)
-// driven directly by wheel + touch, which always works.
+// The page scrolls normally now (so you can scroll past the video to
+// reach the footer). The video is pinned (position:fixed) behind a tall
+// ".hero" spacer; the scroll position within that spacer maps to the
+// video timeline. When the spacer ends, the footer scrolls up over it.
 let scrollProgress = 0; // 0 = first frame, 1 = last frame
 
-function addScroll(deltaPx) {
-  // Larger divisor = slower scrub. ~4000px of scrolling covers the clip.
-  scrollProgress = Math.min(1, Math.max(0, scrollProgress + deltaPx / 4000));
+function updateScrollProgress() {
+  const hero = document.querySelector(".hero");
+  if (!hero) return; // the About page has no video hero
+  const dist = Math.max(1, hero.offsetHeight - window.innerHeight);
+  scrollProgress = Math.min(1, Math.max(0, window.scrollY / dist));
 }
-
-window.addEventListener("wheel", (e) => addScroll(e.deltaY), { passive: true });
-
-// Touch drag also scrubs (separate from the ripple touch handler).
-let lastTouchY = null;
-window.addEventListener("touchstart", (e) => {
-  lastTouchY = e.touches[0]?.clientY ?? null;
-});
-window.addEventListener(
-  "touchmove",
-  (e) => {
-    const y = e.touches[0]?.clientY;
-    if (y != null && lastTouchY != null) addScroll(lastTouchY - y);
-    lastTouchY = y ?? lastTouchY;
-  },
-  { passive: true }
-);
+window.addEventListener("scroll", updateScrollProgress, { passive: true });
+updateScrollProgress();
 
 // 8. ANIMATION LOOP ------------------------------------------
 const INTRO_DURATION = 2.6; // seconds for the reveal (slower)
@@ -329,4 +317,5 @@ window.addEventListener("resize", () => {
     window.innerWidth,
     window.innerHeight
   );
+  updateScrollProgress();
 });

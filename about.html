@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Glass Ripple — About</title>
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
     <!-- Same shell as index.html so a direct visit to /about.html also works. -->
     <script type="importmap">
@@ -27,59 +33,60 @@
     <div data-barba="wrapper">
       <main data-barba="container" data-barba-namespace="about">
         <article class="about-page">
-          <div class="about-inner">
-            <header class="about-hero">
-              <p class="eyebrow">About</p>
-              <h1>We build motion-first web experiences.</h1>
-              <p class="lead">
-                A small studio obsessed with interfaces that respond to you —
-                where scroll, cursor, and light are part of the story, not an
-                afterthought.
-              </p>
-            </header>
-
-            <section>
-              <h2>What we do</h2>
-              <p>
-                We design and build tactile websites and product interfaces:
-                WebGL scenes, scroll-driven storytelling, and the kind of
-                micro-interactions that make a page feel alive. From concept
-                to production, we handle design, motion, and front-end
-                engineering under one roof.
-              </p>
-            </section>
-
-            <section>
-              <h2>How we work</h2>
-              <p>
-                Every project starts with the feel. We prototype motion early,
-                test it on real devices, and only then wrap it in a codebase
-                that's fast, accessible, and easy to maintain. No bloated
-                frameworks where a few hundred lines will do.
-              </p>
-            </section>
-
-            <div class="stats">
-              <div class="stat"><b>40+</b><span>Projects shipped</span></div>
-              <div class="stat"><b>12</b><span>Awards &amp; features</span></div>
-              <div class="stat"><b>∞</b><span>Frames obsessed over</span></div>
-            </div>
-
-            <section>
-              <h2>Get in touch</h2>
-              <p>
-                Have something in motion? Replace this placeholder copy with
-                your real story and reach out — we'd love to build it.
-              </p>
-            </section>
-
-            <a class="back" href="/index.html">← Back home</a>
-
-            <footer>© 2026 Glass Ripple Studio — built with Three.js &amp; Barba.js</footer>
-          </div>
+          <section class="about-hero-screen">
+            <p class="intro">
+              We build software, systems, and digital platforms engineered for
+              scale. Robust architecture, clean code, and thoughtful execution
+              come together to create solutions that perform today and evolve
+              with tomorrow.
+            </p>
+            <p class="intro-caption">
+              We build systems that lorem ipsum dolor amet consectetur
+              adipiscing elit tuvactu
+            </p>
+            <canvas id="about-glass"></canvas>
+          </section>
         </article>
       </main>
     </div>
+
+    <!-- Persistent site footer (identical to Home). -->
+    <footer class="footer">
+      <div class="footer-grid">
+        <div class="brand">
+          <h2>Let's design<br />what's next.</h2>
+          <a class="contact-btn" href="/about.html">CONTACT US</a>
+        </div>
+
+        <nav class="footer-links">
+          <a href="/index.html">Projects</a>
+          <a href="/about.html">About us</a>
+          <a href="/index.html">Privacy Policy</a>
+          <a href="/index.html">Legal Notice</a>
+          <a href="/about.html">Get in touch</a>
+        </nav>
+
+        <div class="footer-contacts">
+          <div class="contact">
+            <b>Marseille, France</b>
+            <span>+33 07 63 85 83 88</span>
+          </div>
+          <div class="contact">
+            <b>London, UK</b>
+            <span>+33 07 63 85 83 88</span>
+          </div>
+          <div class="contact">
+            <b>Florianópolis, Brazil</b>
+            <span>+55 48 99195-8826</span>
+            <span>SC-405, 4397 - Campeche,</span>
+            <span>Florianópolis - SC, 88065-000</span>
+            <span>OKA SHOPPING</span>
+          </div>
+        </div>
+      </div>
+
+      <canvas id="footer-glass"></canvas>
+    </footer>
 
     <script type="module" src="/main.js"></script>
     <script type="module" src="/transitions.js"></script>
