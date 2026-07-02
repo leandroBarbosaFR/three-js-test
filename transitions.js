@@ -18,8 +18,8 @@ if (footerCanvas) initFooterGlass(footerCanvas);
 // in, then the panel slides off the top to reveal the next page.
 const overlay = document.querySelector(".page-transition");
 const overlayLabel = overlay?.querySelector(".page-transition__logo");
-const EASE = "cubic-bezier(0.83, 0, 0.17, 1)"; // expressive ease-in-out
-const WIPE_MS = 620;
+const EASE = "cubic-bezier(0.37, 0, 0.63, 1)"; // soft ease-in-out (sine)
+const WIPE_MS = 720;
 
 // Cover the screen (bottom → up), then pop the label in.
 async function coverScreen() {
