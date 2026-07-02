@@ -17,7 +17,7 @@ if (footerCanvas) initFooterGlass(footerCanvas);
 // A brand-orange panel slides up to cover the screen, the big "1367" pops
 // in, then the panel slides off the top to reveal the next page.
 const overlay = document.querySelector(".page-transition");
-const overlayLabel = overlay?.querySelector(".page-transition__label");
+const overlayLabel = overlay?.querySelector(".page-transition__logo");
 const EASE = "cubic-bezier(0.83, 0, 0.17, 1)"; // expressive ease-in-out
 const WIPE_MS = 620;
 

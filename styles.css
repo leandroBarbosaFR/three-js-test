@@ -68,11 +68,9 @@ body {
   pointer-events: none;
   will-change: transform;
 }
-.page-transition__label {
-  color: #fff;
-  font-weight: 700;
-  font-size: clamp(64px, 14vw, 200px);
-  letter-spacing: -0.04em;
+.page-transition__logo {
+  width: clamp(96px, 12vw, 168px);
+  height: auto;
   opacity: 0;
   will-change: transform, opacity;
 }
