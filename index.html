@@ -28,20 +28,36 @@
          container so they survive page transitions. -->
     <canvas id="app"></canvas>
     <nav class="nav">
-      <a href="/index.html">Home</a>
-      <a href="/about.html">About</a>
+      <div class="nav__left">
+        <a href="/index.html">Projects</a>
+        <a href="/about.html">About us</a>
+      </div>
+      <a class="nav__logo" href="/index.html">1367</a>
+      <div class="nav__right">
+        <a href="/about.html">Contact us</a>
+        <span class="nav__menu" aria-hidden="true"></span>
+      </div>
     </nav>
-
-    <!-- Full-screen wipe panel used for page transitions. -->
-    <div class="page-transition" aria-hidden="true">
-      <img class="page-transition__logo" src="/public/Frame-sec.svg" alt="" />
-    </div>
 
     <div data-barba="wrapper">
       <main data-barba="container" data-barba-namespace="home">
         <!-- Tall transparent spacer: the pinned video scrubs while you
              scroll through it, then the footer scrolls up over it. -->
-        <div class="hero"></div>
+        <div class="hero">
+          <div class="home-hero">
+            <h1 class="home-hero__headline">
+              Custom Software Development for
+              <span class="muted">Growing Businesses.</span>
+            </h1>
+            <div class="home-hero__cta">
+              <p class="home-hero__caption">
+                We collaborate with forward-thinking companies to shape and
+                step into their future.
+              </p>
+              <a class="home-hero__book" href="/about.html">BOOK A CALL</a>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
 

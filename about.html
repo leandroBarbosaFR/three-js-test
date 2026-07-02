@@ -26,14 +26,16 @@
   <body>
     <canvas id="app"></canvas>
     <nav class="nav">
-      <a href="/index.html">Home</a>
-      <a href="/about.html">About</a>
+      <div class="nav__left">
+        <a href="/index.html">Projects</a>
+        <a href="/about.html">About us</a>
+      </div>
+      <a class="nav__logo" href="/index.html">1367</a>
+      <div class="nav__right">
+        <a href="/about.html">Contact us</a>
+        <span class="nav__menu" aria-hidden="true"></span>
+      </div>
     </nav>
-
-    <!-- Full-screen wipe panel used for page transitions. -->
-    <div class="page-transition" aria-hidden="true">
-      <img class="page-transition__logo" src="/public/Frame-sec.svg" alt="" />
-    </div>
 
     <div data-barba="wrapper">
       <main data-barba="container" data-barba-namespace="about">

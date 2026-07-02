@@ -1,86 +1,24 @@
 // ============================================================
-//  Barba.js page transitions
-//  The WebGL canvas and nav live outside [data-barba="container"],
-//  so they persist. Barba fetches the next page over AJAX, swaps
-//  only the container, and we crossfade between the two.
+//  Barba.js page transitions — "grow from center"
+//  The incoming page starts as a small centered box and scales up to
+//  fill the screen; the outgoing page sits behind (or shrinks away).
+//  Both containers are stacked full-screen during the transition
+//  (see .is-transitioning in styles.css).
 // ============================================================
 
 import barba from "@barba/core";
 import { initFooterGlass } from "/footer-glass.js";
 
-// The footer (and its glass "1367" canvas) is persistent — outside the
-// Barba container — so we initialise it once for the whole session.
+// The footer (and its glass "1367") is persistent — init once.
 const footerCanvas = document.getElementById("footer-glass");
 if (footerCanvas) initFooterGlass(footerCanvas);
 
-// ---- Overlay wipe transition (Web Animations API, no extra library) ----
-// A brand-orange panel slides up to cover the screen, the big "1367" pops
-// in, then the panel slides off the top to reveal the next page.
-const overlay = document.querySelector(".page-transition");
-const overlayLabel = overlay?.querySelector(".page-transition__logo");
-const EASE = "cubic-bezier(0.37, 0, 0.63, 1)"; // soft ease-in-out (sine)
-const WIPE_MS = 720;
-
-// The wipe panel cycles through these colors — a new one on every page
-// change, looping forever.
-const WIPE_COLORS = ["#ffffff", "#c7c7c7", "#f5390d"]; // white, grey, orange
-let wipeIndex = 0;
-
-// Cover the screen (bottom → up), then pop the label in.
-async function coverScreen() {
-  if (!overlay) return;
-  // Advance to the next color for this transition.
-  overlay.style.backgroundColor = WIPE_COLORS[wipeIndex % WIPE_COLORS.length];
-  wipeIndex++;
-  if (overlayLabel) overlayLabel.style.opacity = "0";
-  await overlay.animate(
-    [{ transform: "translateY(100%)" }, { transform: "translateY(0%)" }],
-    { duration: WIPE_MS, easing: EASE, fill: "forwards" }
-  ).finished;
-  if (overlayLabel) {
-    overlayLabel.animate(
-      [
-        { opacity: 0, transform: "translateY(18px)" },
-        { opacity: 1, transform: "translateY(0)" },
-      ],
-      { duration: 300, easing: "ease-out", fill: "forwards" }
-    );
-  }
-}
-
-// Reveal the next page (overlay continues up and off the top), then park
-// the panel back below the viewport for next time.
-async function revealScreen() {
-  if (!overlay) return;
-  await overlay.animate(
-    [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
-    { duration: WIPE_MS, easing: EASE, fill: "forwards" }
-  ).finished;
-  overlay.getAnimations().forEach((a) => a.cancel());
-  overlay.style.transform = "translateY(100%)";
-  if (overlayLabel) overlayLabel.style.opacity = "0";
-}
-
-barba.init({
-  // Don't let Barba prefetch/transition cross-origin or asset links.
-  prevent: ({ href }) => href.match(/\.(mp4|png|jpe?g|zip)$/i),
-  transitions: [
-    {
-      name: "wipe",
-      leave: () => coverScreen(), // cover before the DOM swaps
-      enter: () => revealScreen(), // uncover the new page
-    },
-  ],
-});
-
-// Apply per-page "chrome": the WebGL canvas only belongs to the home
-// experience, so hide it on real content pages like About. Also keep the
-// document title in sync.
 const canvas = document.getElementById("app");
+const nav = document.querySelector(".nav");
+const EASE = "cubic-bezier(0.65, 0, 0.35, 1)"; // smooth ease-in-out (cubic)
+const GROW_MS = 900;
 
-// The About page has its own glass "1367" canvas. Unlike the footer it
-// lives inside the (swapped) Barba container, so we mount a fresh WebGL
-// instance when About enters and dispose it when we leave.
+// ---- About's glass "1367" lives inside the swapped container ----
 let aboutGlassDestroy = null;
 function mountAboutGlass() {
   const c = document.getElementById("about-glass");
@@ -93,23 +31,90 @@ function unmountAboutGlass() {
   }
 }
 
-function applyNamespace(ns) {
+// Nav color + title for the page we're on.
+function applyChrome(ns) {
   const isHome = ns !== "about";
-  if (canvas) canvas.style.display = isHome ? "block" : "none";
-  document.title = isHome ? "Glass Ripple — Home" : "Glass Ripple — About";
-  if (isHome) unmountAboutGlass();
-  else mountAboutGlass();
+  document.body.classList.toggle("theme-light", isHome);
+  document.body.classList.toggle("theme-dark", !isHome);
+  document.title = isHome ? "1367 — Home" : "1367 — About";
 }
 
-// Set the correct state for the page we first loaded on...
-applyNamespace(
-  document.querySelector('[data-barba="container"]')?.dataset.barbaNamespace
-);
+// Scale + fade a container.
+const scaleAnim = (el, fromS, toS, fromO, toO) =>
+  el.animate(
+    [
+      { transform: `scale(${fromS})`, opacity: fromO },
+      { transform: `scale(${toS})`, opacity: toO },
+    ],
+    { duration: GROW_MS, easing: EASE, fill: "forwards" }
+  ).finished;
 
-// The wipe panel is fully covering the screen between leave and enter, so
-// we swap all the "chrome" (canvas visibility, About glass, scroll, title)
-// here in beforeEnter — invisibly, with no flash.
-barba.hooks.beforeEnter(({ next }) => {
-  window.scrollTo(0, 0);
-  applyNamespace(next.namespace);
+const fadeNav = (to) =>
+  nav?.animate([{ opacity: to === 1 ? 0 : 1 }, { opacity: to }], {
+    duration: to === 1 ? 320 : 180,
+    easing: "ease",
+    fill: "forwards",
+  });
+
+// ---- Initial page state ----
+const initialNs = document.querySelector('[data-barba="container"]')?.dataset
+  .barbaNamespace;
+applyChrome(initialNs);
+if (initialNs === "about") mountAboutGlass();
+if (canvas) canvas.style.display = initialNs === "about" ? "none" : "block";
+
+barba.init({
+  prevent: ({ href }) => href.match(/\.(mp4|png|svg|jpe?g|zip)$/i),
+  transitions: [
+    {
+      name: "grow",
+      sync: true, // keep both containers mounted so they can overlap
+      before() {
+        document.documentElement.classList.add("is-transitioning");
+        if (canvas) canvas.style.display = "block"; // video visible around the box
+        fadeNav(0); // hide nav during the wipe (background is mixed)
+      },
+      beforeEnter({ next }) {
+        window.scrollTo(0, 0);
+        applyChrome(next.namespace);
+        if (next.namespace === "about") mountAboutGlass();
+        // Pre-set the incoming container so there's no full-size flash
+        // before the enter animation's first frame.
+        if (next.container) {
+          if (next.namespace === "about") {
+            // Opaque box that grows from the center (no fade).
+            next.container.style.transform = "scale(0.12)";
+            next.container.style.opacity = "1";
+          } else {
+            next.container.style.transform = "scale(1.06)";
+            next.container.style.opacity = "0";
+          }
+        }
+      },
+      leave({ current }) {
+        // Going to About: Home stays put and About grows over it.
+        // Going to Home: About shrinks away toward the center, revealing Home.
+        if (current.namespace === "about")
+          return scaleAnim(current.container, 1, 0.12, 1, 0);
+        return Promise.resolve();
+      },
+      enter({ next }) {
+        if (next.namespace === "about")
+          return scaleAnim(next.container, 0.12, 1, 1, 1); // opaque grow
+        return scaleAnim(next.container, 1.06, 1, 0, 1); // gentle settle-in
+      },
+      after({ next }) {
+        document.documentElement.classList.remove("is-transitioning");
+        if (next.container) {
+          next.container.getAnimations().forEach((a) => a.cancel());
+          next.container.style.transform = "";
+          next.container.style.opacity = "";
+        }
+        const isHome = next.namespace !== "about";
+        if (canvas) canvas.style.display = isHome ? "block" : "none";
+        if (isHome) unmountAboutGlass();
+        fadeNav(1); // bring the nav back in the new page's color
+      },
+    },
+  ],
 });
