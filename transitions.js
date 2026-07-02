@@ -21,9 +21,17 @@ const overlayLabel = overlay?.querySelector(".page-transition__logo");
 const EASE = "cubic-bezier(0.37, 0, 0.63, 1)"; // soft ease-in-out (sine)
 const WIPE_MS = 720;
 
+// The wipe panel cycles through these colors — a new one on every page
+// change, looping forever.
+const WIPE_COLORS = ["#ffffff", "#c7c7c7", "#f5390d"]; // white, grey, orange
+let wipeIndex = 0;
+
 // Cover the screen (bottom → up), then pop the label in.
 async function coverScreen() {
   if (!overlay) return;
+  // Advance to the next color for this transition.
+  overlay.style.backgroundColor = WIPE_COLORS[wipeIndex % WIPE_COLORS.length];
+  wipeIndex++;
   if (overlayLabel) overlayLabel.style.opacity = "0";
   await overlay.animate(
     [{ transform: "translateY(100%)" }, { transform: "translateY(0%)" }],
