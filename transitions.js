@@ -13,24 +13,54 @@ import { initFooterGlass } from "/footer-glass.js";
 const footerCanvas = document.getElementById("footer-glass");
 if (footerCanvas) initFooterGlass(footerCanvas);
 
-// A gentle fade using the Web Animations API (no extra library needed).
-const fade = (el, from, to, duration = 450) =>
-  el.animate([{ opacity: from }, { opacity: to }], {
-    duration,
-    easing: "ease",
-    fill: "forwards",
-  }).finished;
+// ---- Overlay wipe transition (Web Animations API, no extra library) ----
+// A brand-orange panel slides up to cover the screen, the big "1367" pops
+// in, then the panel slides off the top to reveal the next page.
+const overlay = document.querySelector(".page-transition");
+const overlayLabel = overlay?.querySelector(".page-transition__label");
+const EASE = "cubic-bezier(0.83, 0, 0.17, 1)"; // expressive ease-in-out
+const WIPE_MS = 620;
+
+// Cover the screen (bottom → up), then pop the label in.
+async function coverScreen() {
+  if (!overlay) return;
+  if (overlayLabel) overlayLabel.style.opacity = "0";
+  await overlay.animate(
+    [{ transform: "translateY(100%)" }, { transform: "translateY(0%)" }],
+    { duration: WIPE_MS, easing: EASE, fill: "forwards" }
+  ).finished;
+  if (overlayLabel) {
+    overlayLabel.animate(
+      [
+        { opacity: 0, transform: "translateY(18px)" },
+        { opacity: 1, transform: "translateY(0)" },
+      ],
+      { duration: 300, easing: "ease-out", fill: "forwards" }
+    );
+  }
+}
+
+// Reveal the next page (overlay continues up and off the top), then park
+// the panel back below the viewport for next time.
+async function revealScreen() {
+  if (!overlay) return;
+  await overlay.animate(
+    [{ transform: "translateY(0%)" }, { transform: "translateY(-100%)" }],
+    { duration: WIPE_MS, easing: EASE, fill: "forwards" }
+  ).finished;
+  overlay.getAnimations().forEach((a) => a.cancel());
+  overlay.style.transform = "translateY(100%)";
+  if (overlayLabel) overlayLabel.style.opacity = "0";
+}
 
 barba.init({
   // Don't let Barba prefetch/transition cross-origin or asset links.
   prevent: ({ href }) => href.match(/\.(mp4|png|jpe?g|zip)$/i),
   transitions: [
     {
-      name: "fade",
-      // Fade the outgoing page out.
-      leave: ({ current }) => fade(current.container, 1, 0),
-      // Fade the incoming page in.
-      enter: ({ next }) => fade(next.container, 0, 1),
+      name: "wipe",
+      leave: () => coverScreen(), // cover before the DOM swaps
+      enter: () => revealScreen(), // uncover the new page
     },
   ],
 });
@@ -67,13 +97,11 @@ function applyNamespace(ns) {
 applyNamespace(
   document.querySelector('[data-barba="container"]')?.dataset.barbaNamespace
 );
-// While a transition runs, keep the canvas visible so there's no dark
-// flash — the opaque About page covers it when heading there.
-barba.hooks.beforeLeave(() => {
-  if (canvas) canvas.style.display = "block";
-});
-// ...then settle the final state once the new page has entered.
-barba.hooks.afterEnter(({ next }) => applyNamespace(next.namespace));
 
-// Start each newly-entered page at the top (Barba keeps scroll otherwise).
-barba.hooks.beforeEnter(() => window.scrollTo(0, 0));
+// The wipe panel is fully covering the screen between leave and enter, so
+// we swap all the "chrome" (canvas visibility, About glass, scroll, title)
+// here in beforeEnter — invisibly, with no flash.
+barba.hooks.beforeEnter(({ next }) => {
+  window.scrollTo(0, 0);
+  applyNamespace(next.namespace);
+});

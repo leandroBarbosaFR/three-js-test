@@ -54,6 +54,29 @@ body {
   z-index: 1;
 }
 
+/* Full-screen wipe panel for page transitions (driven by transitions.js).
+   Sits above everything, including the nav. Parked below the viewport. */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #f5390d;
+  transform: translateY(100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  will-change: transform;
+}
+.page-transition__label {
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(64px, 14vw, 200px);
+  letter-spacing: -0.04em;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
 /* Home hero: a tall transparent spacer. The pinned video shows through
    it while you scroll, scrubbing the clip; when it ends the footer
    scrolls up over the video. */
