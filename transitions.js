@@ -15,8 +15,8 @@ if (footerCanvas) initFooterGlass(footerCanvas);
 
 const canvas = document.getElementById("app");
 const nav = document.querySelector(".nav");
-const EASE = "cubic-bezier(0.65, 0, 0.35, 1)"; // smooth ease-in-out (cubic)
-const GROW_MS = 900;
+const EASE = "cubic-bezier(0.76, 0, 0.24, 1)"; // stronger, smooth ease-in-out
+const GROW_MS = 1200;
 
 // ---- About's glass "1367" lives inside the swapped container ----
 let aboutGlassDestroy = null;
